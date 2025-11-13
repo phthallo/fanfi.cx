@@ -7,8 +7,9 @@ import (
 )
 
 func sanitiseDNSLabel(label string) string {
-    re := regexp.MustCompile(`[^a-zA-Z0-9-]`)
-    return re.ReplaceAllString(label, "-")
+	label = regexp.MustCompile(`[\\ ]`).ReplaceAllString(label, "+")
+	re := regexp.MustCompile(`[^a-zA-Z0-9+._~-]`)
+	return re.ReplaceAllString(label, "-")
 }
 
 func Handler(name string) ([]newdns.Set, error) {
@@ -23,7 +24,7 @@ func Handler(name string) ([]newdns.Set, error) {
 				fmt.Println("this is where the err", err)
 			}
 
-			return []newdns.Set{
+			sets := []newdns.Set{
 				{
 					Name: fqdn,
 					Type: newdns.A,
@@ -38,14 +39,18 @@ func Handler(name string) ([]newdns.Set, error) {
 						{Address: "1:2:3:4::"},
 					},
 				},
-				{ 
-					Name: fqdn,
-					Type: newdns.TXT,
-					Records: []newdns.Record{
-						{Data: []string{query[0].Title}},
-					},
-				},
-			}, nil
+			}
+
+			txtSet := newdns.Set{
+				Name: fqdn,
+				Type: newdns.TXT,
+				Records: []newdns.Record{},
+			}
+			for _, txt := range FormatSearchResults(query) {
+				txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
+			}
+			sets = append(sets, txtSet)
+			return sets, nil
 		}
 
 			return nil, nil
