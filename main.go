@@ -22,7 +22,7 @@ func main(){
             os.Getenv("PRIMARY_NS"),
             os.Getenv("SECONDARY_NS"),
             os.Getenv("TERTIARY_NS"),
-            os.Getenv("QUARTERNARY_NS"),
+            os.Getenv("QUATERNARY_NS"),
         },
         AdminEmail: "generic@email.com",
 		Handler: internal.Handler,
@@ -39,13 +39,17 @@ server := newdns.NewServer(newdns.Config{
 })
 
 go func() {
-    err := server.Run(":1337")
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = 1337
+    }
+    err := server.Run(fmt.Sprintf(":%v", port))
     if err != nil {
         panic(err)
     }
 }()
 
-fmt.Println(`Search AO3: dig @0.0.0.0 "your search here" -p 1337`)
+fmt.Println(`Server is up and running!`)
 
 select {}
 }
