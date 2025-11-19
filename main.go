@@ -19,6 +19,7 @@ func main(){
 		Name:             os.Getenv("FQDN"),
         MasterNameServer: os.Getenv("PRIMARY_NS"),
         AllNameServers: []string{
+            os.Getenv("PRIMARY_NS"),
             os.Getenv("SECONDARY_NS"),
             os.Getenv("TERTIARY_NS"),
             os.Getenv("QUARTERNARY_NS"),
