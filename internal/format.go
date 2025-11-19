@@ -1,87 +1,77 @@
 package internal
 
 import (
-	"fmt"
-	"strings"
+    "fmt"
+    "strings"
 )
 
-func splitStrings(block string) ([]string){
-    var txtStrings []string
-    var result string
+var replacer = strings.NewReplacer(
+    "\010", "",
+    "\u2019", "'",
+    "\u2018", "'",
+    "\u2014", "-",
+    "\u2013", "-",
+    "\u0222", "'",
+    "\u201C", "'",
+    "\u201D", "'",
+    "\u00a0", " ",
+)
+
+func splitStrings(block string) []string {
     lines := strings.Split(block, "\n")
-    replacer := strings.NewReplacer(
-        "\010", "",
-        "\u2019", "'",
-        "\u2018", "'",
-        "\u2014", "-",  
-        "\u2013", "-",
-        "\u0222", `'`, // replace all double quotes with single quotes bc ts sucks
-        "\u201C", `'`,
-        "\u201D", `'`,
-        "\u00a0", " ", 
-        )
-for _, line := range lines {
-    for i := 0; i < len(line); {
-        end := i + 255
-        if end > len(line) {
-            end = len(line)
-        } else {
-            lastDot := strings.LastIndex(line[i:end], ".")
-            if lastDot != -1 {
-                end = i + lastDot + 1  
+    txtStrings := make([]string, 0, len(lines))
+    
+    for _, line := range lines {
+        for len(line) > 0 {
+            end := 255
+            if end > len(line) {
+                end = len(line)
+            } else if idx := strings.LastIndex(line[:end], "."); idx != -1 {
+                end = idx + 1
             }
+            
+            txtStrings = append(txtStrings, replacer.Replace(line[:end]))
+            line = line[end:]
         }
-        result = replacer.Replace(line[i:end])
-        txtStrings = append(txtStrings, result)
-        i = end
-        }
-    }    
+    }
     return txtStrings
 }
 
-func FormatSearchResults(works []Work) (formatted []string){
-    var fullFormattedStrings []string
-	for _, work := range works {
-		var modifiedDescription []string
-		splitLinesDescription := strings.Split(work.Description, "\n")
-		for _, line := range splitLinesDescription {
-			modifiedDescription = append(modifiedDescription, fmt.Sprintf("|| %s", line))
-		}
-		block := fmt.Sprintf(`
-||=========================
-||==================
-|| %s by %s
-||==================
-|| >> Description
-%s
-||==================
-|| >> ID
-|| %s
-||=========================
-.
-.`, work.Title, work.Author, strings.Join(modifiedDescription, "\n"), work.ID)
-    fullFormattedStrings = append(fullFormattedStrings, splitStrings(block)...)
-    }    
-    return fullFormattedStrings
-
+func FormatSearchResults(works []Work) []string {
+    var buf strings.Builder
+    result := make([]string, 0, len(works)*50)
+    
+    for _, work := range works {
+        buf.WriteString("\n||=========================\n")
+        buf.WriteString("||==================\n")
+        buf.WriteString(fmt.Sprintf("|| %s by %s\n", work.Title, work.Author))
+        buf.WriteString("||==================\n")
+        buf.WriteString("|| >> Description\n")
+        
+        for _, line := range strings.Split(work.Description, "\n") {
+            buf.WriteString(fmt.Sprintf("|| %s\n", line))
+        }
+        
+        buf.WriteString("||==================\n")
+        buf.WriteString(fmt.Sprintf("|| >> ID\n|| %s\n", work.ID))
+        buf.WriteString("||=========================\n.\n.\n")
+    }
+    
+    result = append(result, splitStrings(buf.String())...)
+    return result
 }
 
-func FormatWork(chapter *Chapter) (formatted []string){
-    block := fmt.Sprintf(`
-||=========================
-|| %s
-||==================
-|| >> Summary
-|| %s
-||=========================
-%s
-||=========================
-|| >> Author Notes
-|| %s
-||=========================
-
-`, chapter.Title, chapter.Summary, chapter.Content, chapter.AuthorNotes)
-    fmt.Println(chapter.Content)
-    txtStrings := splitStrings(block)
-    return txtStrings
+func FormatWork(chapter *Chapter) []string {
+    var buf strings.Builder
+    buf.WriteString("\n||=========================\n")
+    buf.WriteString(fmt.Sprintf("|| %s\n", chapter.Title))
+    buf.WriteString("||==================\n")
+    buf.WriteString(fmt.Sprintf("|| >> Summary\n|| %s\n", chapter.Summary))
+    buf.WriteString("||=========================\n")
+    buf.WriteString(chapter.Content)
+    buf.WriteString("\n||=========================\n")
+    buf.WriteString(fmt.Sprintf("|| >> Author Notes\n|| %s\n", chapter.AuthorNotes))
+    buf.WriteString("||=========================\n")
+    
+    return splitStrings(buf.String())
 }

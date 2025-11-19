@@ -20,10 +20,19 @@ func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 	params := regexp.MustCompile(`\[(\w+)\]\s+([^\[]+)`).FindAllStringSubmatch(label, -1)	
 	fmt.Println(params)	
 
+
 	validParams := make(map[string]string)
+
+
 	var tag string
 	var phrase string
 	var err error
+
+	if (params == nil){
+		phrase = regexp.MustCompile(`[\\ ]`).ReplaceAllString(label, "+") 
+		phrase = regexp.MustCompile(`[^a-zA-Z0-9+._~-]`).ReplaceAllString(label, "+")
+		validParams["search"] = phrase
+	}
 
 	for i, match := range params {
 		tag = match[1]
@@ -54,9 +63,8 @@ func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 		}
 		
     validParams[tag] = phrase
-
 	}
-	fmt.Println(validParams)
+
 	return validParams, nil
 }
 
@@ -64,7 +72,12 @@ func Handler(name string) ([]newdns.Set, error) {
 		var searchResults []Work
 		var chapterResults *Chapter
 		var parsedSearchParams, err = validateAndSanitiseDNSLabel(name)
-		var fqdn = regexp.MustCompile(`[^a-zA-Z0-9._~-]+`).ReplaceAllString(fmt.Sprint(parsedSearchParams), ".") + "." + os.Getenv("FQDN")
+		var fqdn string
+		fqdn = regexp.MustCompile(`[^a-zA-Z0-9._~-]+`).ReplaceAllString(fmt.Sprint(parsedSearchParams), ".")
+		if os.Getenv("FQDN") != "." {
+ 			fqdn += os.Getenv("FQDN")
+		}
+		fmt.Println(fqdn)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -120,14 +133,18 @@ func Handler(name string) ([]newdns.Set, error) {
 		
 		if workID != "" {
 			chapterResults, err = ScrapeWork(workID, chapter)
+
+			fmt.Println("chapterresults", chapterResults)
+
 			if err != nil {
 				fmt.Println("Error fetching work:", err)
-			}
-			for _, txt := range FormatWork(chapterResults) {
-				txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
-			}
+			} 
 
-
+			if chapterResults != nil {
+				for _, txt := range FormatWork(chapterResults) {
+					txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
+				}
+			}
 		}
 
 		sets = append(sets, txtSet)

@@ -4,6 +4,7 @@ import (
 	"github.com/gocolly/colly"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type Work struct {
@@ -24,9 +25,13 @@ type Work struct {
 }
 
 func QuerySearchResults(query string) ([]Work, error) {
-	c := colly.NewCollector()
+	
 	var works []Work
 	var found bool
+
+	c := colly.NewCollector()
+    c.SetRequestTimeout(30 * time.Second)
+    c.AllowURLRevisit = true
 
 	c.OnHTML("li[class]", func(e *colly.HTMLElement) {
 		if strings.HasPrefix(e.Attr("class"), "work blurb group") {

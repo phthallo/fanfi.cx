@@ -1,13 +1,15 @@
 # fanfi.cx
-Query and read fanfiction from the Archive of Our Own over DNS. Inspired by [ch.at](https://github.com/Deep-ai-inc/ch.at). Runs on a single Go binary.
+Query and read fanfiction from the Archive of Our Own over DNS. Inspired by [ch.at](https://github.com/Deep-ai-inc/ch.at). Runs on a single Go binary. 
 
 
 ## Usage
 ```
-dig @fanfi.cx "your query here" -p 1337 +short
+dig @fanfi.cx "your query here" -p 1337
 ```
 
 `+short` is optional but will make output look neater.
+
+**Queries can and probably will time out, particularly with long works.** Add a timeout with `+timeout=<timeoutvaluehere>`. You might also need to rerun the command. I'm still not entirely sure why this happens. 
 
 ### Query terms
 
@@ -19,7 +21,7 @@ dig @fanfi.cx "your query here" -p 1337 +short
 
 If no parameters are specified, it will default to searching for that term.
 
-For instance, `dig @fanfi.cx "[work_id] 17400464 [chapter] 3" -p 1337 +short TXT` is a valid query. `dig @fanfi.cx "[search] stag beetles and broken legs" -p 1337 +short TXT` is also a valid query. 
+For instance, `dig @fanfi.cx "[work_id] 17400464 [chapter] 3" -p 1337 +short TXT` is a valid query. `dig @fanfi.cx "[search] stag beetles and broken legs" -p 1337 +short TXT` is also a valid query, as is `dig @fanfi.cx "stag beetles and broken legs" -p 1337 +short TXT` 
 
 ## Development
 
