@@ -10,6 +10,8 @@ COPY main.go ./
 
 COPY internal ./internal
 
+RUN go get 
+
 RUN CGO_ENABLED=0 GOOS=linux go build -o /fanficx
 
 CMD ["/fanficx"]
