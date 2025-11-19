@@ -5,7 +5,7 @@ import (
 	"github.com/miekg/dns"
 	"fmt"
 	"github.com/phthallo/fanfi.cx/internal"
-    "github.com/joho/dotenv"    
+    "github.com/joho/godotenv"    
     "os"
 )
 
