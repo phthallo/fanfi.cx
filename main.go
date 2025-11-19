@@ -20,7 +20,7 @@ func main(){
         MasterNameServer: os.Getenv("MASTER_NS"),
         AllNameServers: []string{
             os.Getenv("SECONDARY_NS"),
-            os.Getenv("TERTIARY_NS")
+            os.Getenv("TERTIARY_NS"),
             os.Getenv("QUARTERNARY_NS"),
         },
         AdminEmail: "generic@email.com",
