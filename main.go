@@ -49,7 +49,7 @@ go func() {
     }
 }()
 
-fmt.Println(`Server is up and running!`)
+fmt.Println(`Server is up and running on port `, port)
 
 select {}
 }
