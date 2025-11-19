@@ -17,7 +17,7 @@ func main(){
 
 	zone := &newdns.Zone{
 		Name:             os.Getenv("FQDN"),
-        MasterNameServer: os.Getenv("MASTER_NS"),
+        MasterNameServer: os.Getenv("PRIMARY_NS"),
         AllNameServers: []string{
             os.Getenv("SECONDARY_NS"),
             os.Getenv("TERTIARY_NS"),
