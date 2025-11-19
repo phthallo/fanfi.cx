@@ -60,6 +60,7 @@ func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 }
 
 func Handler(name string) ([]newdns.Set, error) {
+		fmt.Println("[handler] Called with name:", name)
 		var searchResults []Work
 		var chapterResults *Chapter
 		var fqdn = name + "fanfi.cx."
