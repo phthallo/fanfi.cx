@@ -5,12 +5,18 @@ import (
 	"github.com/miekg/dns"
 	"fmt"
 	"github.com/phthallo/fanfi.cx/internal"
+    "github.com/joho/dotenv"    
+    "os"
 )
 
 
 func main(){
+	if err := godotenv.Load(); err != nil {
+		fmt.Errorf("Error loading environment variables!")
+	}
+
 	zone := &newdns.Zone{
-		Name:             ".",
+		Name:             os.Getenv("FQDN"),
         MasterNameServer: "ns1.hostmaster.com.",
         AllNameServers: []string{
             "ns1.hostmaster.com.",
