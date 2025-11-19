@@ -17,11 +17,11 @@ func main(){
 
 	zone := &newdns.Zone{
 		Name:             os.Getenv("FQDN"),
-        MasterNameServer: "ns1.hostmaster.com.",
+        MasterNameServer: os.Getenv("MASTER_NS"),
         AllNameServers: []string{
-            "ns1.hostmaster.com.",
-            "ns2.hostmaster.com.",
-            "ns3.hostmaster.com.",
+            os.Getenv("SECONDARY_NS"),
+            os.Getenv("TERTIARY_NS")
+            os.Getenv("QUARTERNARY_NS"),
         },
         AdminEmail: "generic@email.com",
 		Handler: internal.Handler,
