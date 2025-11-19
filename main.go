@@ -41,7 +41,7 @@ server := newdns.NewServer(newdns.Config{
 go func() {
     port := os.Getenv("PORT")
     if port == "" {
-        port = 1337
+        port = "1337"
     }
     err := server.Run(fmt.Sprintf(":%v", port))
     if err != nil {
