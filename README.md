@@ -17,5 +17,4 @@ dig @fanfi.cx "your query here" -p 1337 +short
 
 If no parameters are specified, it will default to searching. for that term.
 
-For instance, `dig @fanfi.cx "[work_id] 17400464 [chapter] 3" -p 1337 +short TXT` is a valid query. 
-`dig @fanfi.cx "[search] stag beetles and broken legs" -p 1337 +short TXT` is also a valid query. 
+For instance, `dig @fanfi.cx "[work_id] 17400464 [chapter] 3" -p 1337 +short TXT` is a valid query. `dig @fanfi.cx "[search] stag beetles and broken legs" -p 1337 +short TXT` is also a valid query. 

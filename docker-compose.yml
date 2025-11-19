@@ -1,0 +1,9 @@
+services:
+  fanficx:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes: 
+      - ./:/github.com/phthallo/fanfi.cx
+    ports: 
+      - "1337:1337"
