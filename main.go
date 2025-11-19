@@ -30,7 +30,10 @@ func main(){
 server := newdns.NewServer(newdns.Config{
     Handler: func(name string) (*newdns.Zone, error) {
         fmt.Println("Server handler received name:", name)
-        return zone, nil
+        if newdns.InZone(os.Getenv("FQDN"), name) {
+            return zone, nil
+        }
+        return nil, nil
     },
     Logger: func(e newdns.Event, msg *dns.Msg, err error, reason string) {
         fmt.Println(e, err, reason)
