@@ -20,10 +20,13 @@ func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 	fmt.Println(params)	
 
 	validParams := make(map[string]string)
+	var tag string
+	var phrase string
+	var err error
 
 	for i, match := range params {
-		tag := match[1]
-		phrase := strings.TrimSpace(match[2])
+		tag = match[1]
+		phrase = strings.TrimSpace(match[2])
 		
 		if (tag == "chapter"){
 			if i == 0 { 
@@ -34,9 +37,9 @@ func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 				continue 
 			}
 
-			if _, err := strconv.Atoi(phrase); err != nil {		
+			if _, err = strconv.Atoi(phrase); err != nil {		
 				return nil, fmt.Errorf("Provided chapter is not a number!")
-			}	
+			}
 		}
 		
 		if tag == "search" {
@@ -58,13 +61,26 @@ func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 
 func Handler(name string) ([]newdns.Set, error) {
 		var searchResults []Work
+		var chapterResults *Chapter
 		var fqdn = name + "fanfi.cx."
 		var parsedSearchParams, err = validateAndSanitiseDNSLabel(name)
 		if err != nil {
 			fmt.Println(err)
 		}
 		var searchQuery = parsedSearchParams["search"]
-		fmt.Println("Search query",  parsedSearchParams["search"], "Chapter",  parsedSearchParams["chapter"], "WorkId",  parsedSearchParams["work_id"])
+
+		var chapter int
+		if parsedSearchParams["chapter"] != "" {
+			if int_chapter, err := strconv.Atoi(parsedSearchParams["chapter"]); err != nil {
+				fmt.Println("Error converting chapter to number", err)
+			} else {
+				chapter = int_chapter
+			}
+		} else {
+			chapter = 1
+		}
+		
+		var workID = parsedSearchParams["work_id"]
 		// var output string
 
 		sets := []newdns.Set{
@@ -90,7 +106,7 @@ func Handler(name string) ([]newdns.Set, error) {
 				Records: []newdns.Record{},
 		}
 
-		if searchQuery != "" {
+		if searchQuery != "" { // TO DO: add support for defaulting to search query if no tags passed
 			searchResults, err = QuerySearchResults(searchQuery)
 			if err != nil {
 				fmt.Println("this is where the err", err)
@@ -100,6 +116,19 @@ func Handler(name string) ([]newdns.Set, error) {
 				txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
 			}
 		}
+		
+		if workID != "" {
+			chapterResults, err = ScrapeWork(workID, chapter)
+			if err != nil {
+				fmt.Println("Error fetching work:", err)
+			}
+			for _, txt := range FormatWork(chapterResults) {
+				txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
+			}
+
+
+		}
+
 		sets = append(sets, txtSet)
 		return sets, nil
 		}

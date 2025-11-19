@@ -16,7 +16,7 @@ type Work struct {
 	Tags string
 	Language string
 	Words string
-	Chapters string
+	ChaptersCount string
 	Comments string
 	Kudos string
 	Bookmarks string
