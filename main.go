@@ -28,6 +28,7 @@ func main(){
 	}
 
 server := newdns.NewServer(newdns.Config{
+    Addr: "0.0.0.0:1337",
     Handler: func(name string) (*newdns.Zone, error) {
         fmt.Println("Server handler received name:", name)
         return zone, nil
