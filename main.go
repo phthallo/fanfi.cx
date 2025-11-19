@@ -38,18 +38,21 @@ server := newdns.NewServer(newdns.Config{
     },
 })
 
+
 go func() {
     port := os.Getenv("PORT")
+
     if port == "" {
         port = "1337"
     }
+    fmt.Println(`Server is up and running on port`, port)
+
     err := server.Run(fmt.Sprintf(":%v", port))
     if err != nil {
         panic(err)
     }
 }()
 
-fmt.Println(`Server is up and running on port `, port)
 
 select {}
 }
