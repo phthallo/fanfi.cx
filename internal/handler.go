@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 	"strconv"
+	"os"
 )
 
 type Search struct {
@@ -62,7 +63,7 @@ func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 func Handler(name string) ([]newdns.Set, error) {
 		var searchResults []Work
 		var chapterResults *Chapter
-		var fqdn = name + "fanfi.cx."
+		var fqdn = name + os.Getenv("FQDN")
 		var parsedSearchParams, err = validateAndSanitiseDNSLabel(name)
 		if err != nil {
 			fmt.Println(err)
