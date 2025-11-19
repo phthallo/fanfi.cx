@@ -63,8 +63,8 @@ func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 func Handler(name string) ([]newdns.Set, error) {
 		var searchResults []Work
 		var chapterResults *Chapter
-		var fqdn = name + os.Getenv("FQDN")
 		var parsedSearchParams, err = validateAndSanitiseDNSLabel(name)
+		var fqdn = strings.TrimRight(regexp.MustCompile(`[^a-zA-Z0-9._~-]+`).ReplaceAllString(fmt.Sprint(parsedSearchParams), "."), ".") + os.Getenv("FQDN")
 		if err != nil {
 			fmt.Println(err)
 		}
