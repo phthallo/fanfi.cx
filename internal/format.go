@@ -22,7 +22,7 @@ var replacer = strings.NewReplacer(
 
 func FormatSearchResults(works []Work) []string {    
     var result []string
-    for _, work := range works {
+    for index, work := range works {
         content := plaintui.Rect([]string{
             fmt.Sprintf("%s by %s", work.Title, work.Author),
             ">> Description",
@@ -30,15 +30,14 @@ func FormatSearchResults(works []Work) []string {
             ">> ID",
             work.ID,
         }, 80, 1)
+        fmt.Println("Just formatted work", index)
         result = append(result, strings.Split(content, "\n")...)
-        
     }
-    
+    fmt.Println("Formatting done! returning")
     return result
 }
 
 func FormatWork(chapter *Chapter) []string {
-    fmt.Println(chapter.Content)
     separate := len(strings.Split(chapter.Content, "\n"))
     fmt.Println("in format work: there are ", separate, "[aragra[hs]]")
     content := plaintui.Rect([]string{

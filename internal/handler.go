@@ -18,8 +18,6 @@ type Search struct {
 func validateAndSanitiseDNSLabel(label string) (map[string]string, error) {
 	label = strings.ReplaceAll(label, `\ `, ` `) // dns thingy will always escape characters
 	params := regexp.MustCompile(`\[(\w+)\]\s+([^\[]+)`).FindAllStringSubmatch(label, -1)	
-	fmt.Println(params)	
-
 
 	validParams := make(map[string]string)
 
@@ -77,9 +75,8 @@ func Handler(name string) ([]newdns.Set, error) {
 		if os.Getenv("FQDN") != "." {
  			fqdn += os.Getenv("FQDN")
 		}
-		fmt.Println(fqdn)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("Handler error", err)
 		}
 		var searchQuery = parsedSearchParams["search"]
 
@@ -93,6 +90,7 @@ func Handler(name string) ([]newdns.Set, error) {
 		} else {
 			chapter = 1
 		}
+		fmt.Println("Determined chapter as", chapter)
 		
 		var workID = parsedSearchParams["work_id"]
 		// var output string
@@ -126,7 +124,9 @@ func Handler(name string) ([]newdns.Set, error) {
 				fmt.Println("this is where the err", err)
 			}
 
-			for _, txt := range FormatSearchResults(searchResults) {
+			formatted := FormatSearchResults(searchResults)
+			fmt.Println(formatted)
+			for _, txt := range formatted {
 				txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
 			}
 		}
