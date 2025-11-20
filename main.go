@@ -43,7 +43,7 @@ go func() {
     port := os.Getenv("PORT")
 
     if port == "" {
-        port = "1337"
+        port = "53"
     }
     fmt.Println(`Server is up and running on port`, port)
 
