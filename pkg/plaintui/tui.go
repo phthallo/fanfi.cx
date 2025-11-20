@@ -1,10 +1,9 @@
 package plaintui 
-// barebones tui framework
+// barebones tui framework designed to be friendly for output methods with limited unicode support
 
 import (
 	"strings"
 	"fmt"
-	"math"
 )
 
 var replacer = strings.NewReplacer(
@@ -17,6 +16,7 @@ var replacer = strings.NewReplacer(
     "\u201C", "'",
     "\u201D", "'",
     "\u00a0", " ",
+	"\u2025", "...",
 )
 
 func splitStrings(block string, width int, padding int) []string {
@@ -29,11 +29,18 @@ func splitStrings(block string, width int, padding int) []string {
             if end > len(line) {
                 end = len(line)
             } else {
-				locationOfLastFullStop := float64(strings.LastIndex(line[:end], "."))
-				locationOfLastSpace := float64(strings.LastIndex(line[:end], " "))
-				idx := math.Max(locationOfLastFullStop, locationOfLastSpace)
-                end = int(idx) + 1
-            } 
+				locationOfLastFullStop := strings.LastIndex(line[:end], ".")
+				locationOfLastSpace := strings.LastIndex(line[:end], " ")
+				idx := locationOfLastFullStop
+
+				if locationOfLastSpace > idx {
+					idx = locationOfLastSpace
+				}
+				
+				if idx >= 0 {
+					end = idx + 1
+				}            
+			} 
 				
             filtered := replacer.Replace(line[:end]) 
 
@@ -41,6 +48,7 @@ func splitStrings(block string, width int, padding int) []string {
 
 			filtered = strings.Repeat(" ", padding) + filtered + strings.Repeat(" ", whitespaceNeeded)
             txtStrings = append(txtStrings, filtered)
+
             line = line[end:]
         }
     }
@@ -72,7 +80,7 @@ func Rect(content []string, width int, padding int) (formatted string){
 		}
 
 		if index != len(content) - 1{
-			buf.WriteString(fmt.Sprintf("||%v||\n", strings.Repeat("=", width - 4 + padding))) // divider
+			buf.WriteString(fmt.Sprintf("||%v||\n", strings.Repeat("-", width - 4 + padding))) // divider
 		}
 	}
 

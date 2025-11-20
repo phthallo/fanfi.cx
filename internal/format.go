@@ -6,20 +6,6 @@ import (
     "github.com/phthallo/fanfi.cx/pkg/plaintui"
 )
 
-var replacer = strings.NewReplacer(
-    "\010", "",
-    "\u2019", "'",
-    "\u2018", "'",
-    "\u2014", "-",
-    "\u2013", "-",
-    "\u0222", "'",
-    "\u201C", "'",
-    "\u201D", "'",
-    "\u00a0", " ",
-    "\u2025", "...",
-)
-
-
 func FormatSearchResults(works []Work) []string {    
     var result []string
     for index, work := range works {
