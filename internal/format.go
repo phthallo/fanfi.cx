@@ -3,6 +3,7 @@ package internal
 import (
     "fmt"
     "strings"
+    "github.com/phthallo/fanfi.cx/pkg/plaintui"
 )
 
 var replacer = strings.NewReplacer(
@@ -15,63 +16,39 @@ var replacer = strings.NewReplacer(
     "\u201C", "'",
     "\u201D", "'",
     "\u00a0", " ",
+    "\u2025", "...",
 )
 
-func splitStrings(block string) []string {
-    lines := strings.Split(block, "\n")
-    txtStrings := make([]string, 0, len(lines))
-    
-    for _, line := range lines {
-        for len(line) > 0 {
-            end := 255
-            if end > len(line) {
-                end = len(line)
-            } else if idx := strings.LastIndex(line[:end], "."); idx != -1 {
-                end = idx + 1
-            }
-            
-            txtStrings = append(txtStrings, replacer.Replace(line[:end]))
-            line = line[end:]
-        }
-    }
-    return txtStrings
-}
 
-func FormatSearchResults(works []Work) []string {
-    var buf strings.Builder
-    result := make([]string, 0, len(works)*50)
-    
+func FormatSearchResults(works []Work) []string {    
+    var result []string
     for _, work := range works {
-        buf.WriteString("\n||=========================\n")
-        buf.WriteString("||==================\n")
-        buf.WriteString(fmt.Sprintf("|| %s by %s\n", work.Title, work.Author))
-        buf.WriteString("||==================\n")
-        buf.WriteString("|| >> Description\n")
+        content := plaintui.Rect([]string{
+            fmt.Sprintf("%s by %s", work.Title, work.Author),
+            ">> Description",
+            work.Description, 
+            ">> ID",
+            work.ID,
+        }, 80, 1)
+        result = append(result, strings.Split(content, "\n")...)
         
-        for _, line := range strings.Split(work.Description, "\n") {
-            buf.WriteString(fmt.Sprintf("|| %s\n", line))
-        }
-        
-        buf.WriteString("||==================\n")
-        buf.WriteString(fmt.Sprintf("|| >> ID\n|| %s\n", work.ID))
-        buf.WriteString("||=========================\n.\n.\n")
     }
     
-    result = append(result, splitStrings(buf.String())...)
     return result
 }
 
 func FormatWork(chapter *Chapter) []string {
-    var buf strings.Builder
-    buf.WriteString("\n||=========================\n")
-    buf.WriteString(fmt.Sprintf("|| %s\n", chapter.Title))
-    buf.WriteString("||==================\n")
-    buf.WriteString(fmt.Sprintf("|| >> Summary\n|| %s\n", chapter.Summary))
-    buf.WriteString("||=========================\n")
-    buf.WriteString(chapter.Content)
-    buf.WriteString("\n||=========================\n")
-    buf.WriteString(fmt.Sprintf("|| >> Author Notes\n|| %s\n", chapter.AuthorNotes))
-    buf.WriteString("||=========================\n")
+    fmt.Println(chapter.Content)
+    separate := len(strings.Split(chapter.Content, "\n"))
+    fmt.Println("in format work: there are ", separate, "[aragra[hs]]")
+    content := plaintui.Rect([]string{
+        chapter.Title,
+        ">> Summary",
+        chapter.Summary, 
+        chapter.Content,
+        ">> Author Notes",
+        chapter.AuthorNotes,
+    }, 80, 1)
     
-    return splitStrings(buf.String())
+    return strings.Split(content, "\n")
 }

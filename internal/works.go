@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"context"
 	"time"
+	"strings"
 )
 
 type Chapter struct {
@@ -30,7 +31,7 @@ func obtainChapter(work_id string, chapter int) (ch int) {
 
 	//
 	fmt.Println("Chapter was ", fmt.Sprintf("#selected_id > option:nth-child(%v)", chapter))
-	
+
 	c.OnHTML(fmt.Sprintf("#selected_id > option:nth-child(%v)", chapter), func(e *colly.HTMLElement) {
 		fmt.Println("stuff", e)
 		chapter_id, err = strconv.Atoi(e.Attr("value"))
@@ -75,11 +76,17 @@ func ScrapeWork(work_id string, chapter int) (*Chapter, error) { // to do: make 
     go func() {
 		fmt.Println("Goroutine running")
 		c.OnHTML("#chapters", func(e *colly.HTMLElement) {
+			var paragraphs []string
+			e.ForEach("div.userstuff > p", func(_ int, el *colly.HTMLElement) {
+				paragraphs = append(paragraphs, el.Text)
+			})
+			text := strings.Join(paragraphs, "\n")
+
 			work_chapter = &Chapter {
 				ID:			 chapter_id,
 				Title: 		 e.ChildText("div > .chapter.preface.group > h3"),
 				Summary:     e.ChildText(".chapter.preface.group > #summary > blockquote"),
-				Content:     e.ChildText("div.userstuff"),
+				Content:     text,
 				AuthorNotes: e.ChildText(".end.notes.module > blockquote"),
 			}
 		})

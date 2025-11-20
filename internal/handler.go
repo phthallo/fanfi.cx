@@ -134,8 +134,6 @@ func Handler(name string) ([]newdns.Set, error) {
 		if workID != "" {
 			chapterResults, err = ScrapeWork(workID, chapter)
 
-			fmt.Println("chapterresults", chapterResults)
-
 			if err != nil {
 				fmt.Println("Error fetching work:", err)
 			} 
