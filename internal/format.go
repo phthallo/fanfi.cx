@@ -29,7 +29,7 @@ func FormatSearchResults(works []Work) []string {
             work.Description, 
             ">> ID",
             work.ID,
-        }, 80, 1)
+        }, 70, 1)
         fmt.Println("Just formatted work", index)
         result = append(result, strings.Split(content, "\n")...)
     }
@@ -47,7 +47,7 @@ func FormatWork(chapter *Chapter) []string {
         chapter.Content,
         ">> Author Notes",
         chapter.AuthorNotes,
-    }, 80, 1)
+    }, 70, 1)
     
     return strings.Split(content, "\n")
 }
