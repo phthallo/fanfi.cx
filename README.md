@@ -4,7 +4,7 @@ Query and read fanfiction from the Archive of Our Own over DNS. Inspired by [ch.
 
 ## Usage
 ```
-dig @fanfi.cx "your query here" -p 1337
+dig @fanfi.cx "your query here" TXT 
 ```
 
 `+short` is optional but will make output look neater.
@@ -21,7 +21,9 @@ dig @fanfi.cx "your query here" -p 1337
 
 If no parameters are specified, it will default to searching for that term.
 
-For instance, `dig @fanfi.cx "[work_id] 17400464 [chapter] 3" -p 1337 +short TXT` is a valid query. `dig @fanfi.cx "[search] stag beetles and broken legs" -p 1337 +short TXT` is also a valid query, as is `dig @fanfi.cx "stag beetles and broken legs" -p 1337 +short TXT` 
+For instance, `dig @fanfi.cx "[work_id] 17400464 [chapter] 3" +short TXT` is a valid query.
+
+`dig @fanfi.cx "[search] stag beetles and broken legs" +short TXT` is also a valid query, as is `dig @fanfi.cx "stag beetles and broken legs" +short TXT` 
 
 ## Development
 
@@ -30,4 +32,30 @@ For instance, `dig @fanfi.cx "[work_id] 17400464 [chapter] 3" -p 1337 +short TXT
     git clone https://github.com/phthallo/fanfi.cx && cd fanfi.cx
     ```
 
+2. Configure environment variables. For local development, you can use the following:
+   ```
+   FQDN="."
+   PRIMARY_NS="ns1.hostmaster.com."
+   SECONDARY_NS="ns2.hostmaster.com."
+   TERTIARY_NS="ns3.hostmaster.com."
+   QUATERNARY_NS="ns4.hostmaster.com."
+   ```
+
+3. Start the program.
+    ```
+    go run main.go
+    ```
+
+4. Test it!
+    ```
+    dig @0.0.0.0 "[search] your query" TXT +short 
+    ```
+
+## Production
+
+Use the provided `docker-compose.yml` file in production. 
+
+By default, the port used is port 53 - feel free to update this by adding `PORT=<yourport>` to your `.env`, though if you do this all `dig` queries will need to have `-p <yourport>` added on the end. 
+
+Make sure you run `sudo ufw allow <yourport>` to open the port you use.
 

@@ -5,5 +5,5 @@ services:
       dockerfile: Dockerfile
     env_file: ".env"
     ports: 
-      - "53:${PORT-53}/udp"
-      - "53:${PORT-53}/tcp"
+      - "${PORT-53}:${PORT-53}/udp"
+      - "${PORT-53}:${PORT-53}/tcp"
