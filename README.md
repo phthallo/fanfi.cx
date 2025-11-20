@@ -59,3 +59,9 @@ By default, the port used is port 53 - feel free to update this by adding `PORT=
 
 Make sure you run `sudo ufw allow <yourport>` to open the port you use.
 
+
+## Roadmap
+
+- [ ] Search result pagination
+- [ ] Tag/other metadata support for works in search view
+- [ ] Overall work view from chapter 
