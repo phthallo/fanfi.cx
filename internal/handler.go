@@ -81,7 +81,7 @@ func Handler(name string) ([]newdns.Set, error) {
 		var searchQuery = parsedSearchParams["search"]
 
 		var chapter int
-		if parsedSearchParams["chapter"] != "" {
+		if parsedSearchParams["chapter"] != "" && parsedSearchParams["search"] == "" {
 			if int_chapter, err := strconv.Atoi(parsedSearchParams["chapter"]); err != nil {
 				fmt.Println("Error converting chapter to number", err)
 			} else {

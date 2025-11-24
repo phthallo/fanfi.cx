@@ -11,11 +11,13 @@ func FormatSearchResults(works []Work) []string {
     for index, work := range works {
         content := plaintui.Rect([]string{
             fmt.Sprintf("%s by %s", work.Title, work.Author),
+            ">> Tags",
+            work.Tags,
             ">> Description",
             work.Description, 
             ">> ID",
             work.ID,
-        }, 70, 1)
+        }, 50, 1)
         fmt.Println("Just formatted work", index)
         result = append(result, strings.Split(content, "\n")...)
     }
@@ -33,7 +35,7 @@ func FormatWork(chapter *Chapter) []string {
         chapter.Content,
         ">> Author Notes",
         chapter.AuthorNotes,
-    }, 70, 1)
+    }, 50, 1)
     
     return strings.Split(content, "\n")
 }

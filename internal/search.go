@@ -28,6 +28,8 @@ func QuerySearchResults(query string) ([]Work, error) {
 	
 	var works []Work
 	var found bool
+	var lengthToTruncateTo int 
+	var lengthTags int
 
 	c := colly.NewCollector()
     c.SetRequestTimeout(30 * time.Second)
@@ -37,14 +39,23 @@ func QuerySearchResults(query string) ([]Work, error) {
 		if strings.HasPrefix(e.Attr("class"), "work blurb group") {
 			// we've found a work!
 			var author string
+			var tags string
 			author = e.ChildText("div.header > h4.heading > a:nth-child(2)")
 			if author == " " { 
 				author = "Anonymous"
+			}
+			tags = e.ChildText("ul.tags.commas")
+			lengthTags = len(tags) 
+			if lengthTags > 150 {
+				lengthToTruncateTo = 150
+			} else {
+				lengthToTruncateTo = lengthTags
 			}
 			work := Work{
 				ID:          strings.Split(e.Attr("id"), "_")[1],
 				Title:       e.ChildText("div.header > h4.heading > a:nth-child(1)"),
 				Author:      author,
+				Tags:		 tags[:lengthToTruncateTo] + "...",
 				Description: e.ChildText("blockquote"),
 			}
 			works = append(works, work)
