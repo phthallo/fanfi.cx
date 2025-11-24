@@ -1,5 +1,11 @@
 # fanfi.cx
+
 Query and read fanfiction from the Archive of Our Own over DNS. Inspired by [ch.at](https://github.com/Deep-ai-inc/ch.at). Runs on a single Go binary. 
+
+
+![demo](https://github.com/user-attachments/assets/39cf586a-441a-41de-a24f-7b49a99806ee)
+<p align = "center"><i>if there's a <s>screen</s> terminal ao3 shall be seen</i></p>
+
 
 
 ## Usage
@@ -53,15 +59,19 @@ For instance, `dig @fanfi.cx "[work_id] 17400464 [chapter] 3" +short TXT` is a v
 
 ## Production
 
-Use the provided `docker-compose.yml` file in production. 
+You can use the provided `docker-compose.yml` file in production, or just build it yourself.
 
 By default, the port used is port 53 - feel free to update this by adding `PORT=<yourport>` to your `.env`, though if you do this all `dig` queries will need to have `-p <yourport>` added on the end. 
 
 Make sure you run `sudo ufw allow <yourport>` to open the port you use.
 
-
 ## Roadmap
 
 - [ ] Search result pagination
 - [ ] Tag/other metadata support for works in search view
-- [ ] Overall work view from chapter 
+- [ ] Overall work view from chapter
+
+## why 💀
+1. it's silly
+2. you can read on plane wifi now 
+3. yes 
