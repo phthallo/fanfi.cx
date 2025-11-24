@@ -29,6 +29,7 @@ func FormatWork(chapter *Chapter) []string {
     separate := len(strings.Split(chapter.Content, "\n"))
     fmt.Println("in format work: there are ", separate, "[aragra[hs]]")
     content := plaintui.Rect([]string{
+        chapter.ParentTitle + " by " + chapter.Author,
         chapter.Title,
         ">> Summary",
         chapter.Summary, 

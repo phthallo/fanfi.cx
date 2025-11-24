@@ -11,6 +11,8 @@ import (
 
 type Chapter struct {
 	ID     int 
+	ParentTitle string
+	Author string
 	Title  string
 	Summary string
 	AuthorNotes string
@@ -75,19 +77,21 @@ func ScrapeWork(work_id string, chapter int) (*Chapter, error) { // to do: make 
 	    
     go func() {
 		fmt.Println("Goroutine running")
-		c.OnHTML("#chapters", func(e *colly.HTMLElement) {
+		c.OnHTML("#workskin", func(e *colly.HTMLElement) {
 			var paragraphs []string
-			e.ForEach("div.userstuff > p", func(_ int, el *colly.HTMLElement) {
+			e.ForEach("#chapters > div.userstuff > p", func(_ int, el *colly.HTMLElement) {
 				paragraphs = append(paragraphs, el.Text)
 			})
 			text := strings.Join(paragraphs, "\n")
 
 			work_chapter = &Chapter {
 				ID:			 chapter_id,
-				Title: 		 e.ChildText("div > .chapter.preface.group > h3"),
-				Summary:     e.ChildText(".chapter.preface.group > #summary > blockquote"),
+				ParentTitle: e.ChildText("div.preface.group > h2.title.heading"),
+				Author:      e.ChildText("div.preface.group > h3.byline.heading"),
+				Title: 		 e.ChildText("#chapters > div > .chapter.preface.group > h3"),
+				Summary:     e.ChildText("#chapters > chapter.preface.group > #summary > blockquote"),
 				Content:     text,
-				AuthorNotes: e.ChildText(".end.notes.module > blockquote"),
+				AuthorNotes: e.ChildText("#chapters > end.notes.module > blockquote"),
 			}
 		})
 
