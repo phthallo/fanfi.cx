@@ -28,7 +28,7 @@ func obtainChapter(work_id string, chapter int) (ch int) {
 	var chapter_id int
 	var err error
 	c := colly.NewCollector() // to do: figure out better ? multithreaded colly solution for cases of high use
-    c.SetRequestTimeout(30 * time.Second)
+    c.SetRequestTimeout(5 * time.Second)
     c.AllowURLRevisit = true
 
 	//
@@ -47,7 +47,7 @@ func obtainChapter(work_id string, chapter int) (ch int) {
 }
 
 func ScrapeWork(work_id string, chapter int) (*Chapter, error) { // to do: make all numbers actually Numbers
-	ctx, cancel := context.WithTimeout(context.Background(), 35*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
     defer cancel()
 
 	result := make(chan *Chapter, 1)
@@ -62,7 +62,7 @@ func ScrapeWork(work_id string, chapter int) (*Chapter, error) { // to do: make 
 		chapter_id = 0
 	}
 	c := colly.NewCollector()
-    c.SetRequestTimeout(30 * time.Second)
+    c.SetRequestTimeout(5 * time.Second)
     c.AllowURLRevisit = true
 
 
@@ -79,7 +79,7 @@ func ScrapeWork(work_id string, chapter int) (*Chapter, error) { // to do: make 
 		fmt.Println("Goroutine running")
 		c.OnHTML("#workskin", func(e *colly.HTMLElement) {
 			var paragraphs []string
-			e.ForEach("#chapters > div.userstuff > p", func(_ int, el *colly.HTMLElement) {
+			e.ForEach("#chapters > div", func(_ int, el *colly.HTMLElement) {
 				paragraphs = append(paragraphs, el.Text)
 			})
 			text := strings.Join(paragraphs, "\n")
@@ -91,7 +91,7 @@ func ScrapeWork(work_id string, chapter int) (*Chapter, error) { // to do: make 
 				Title: 		 e.ChildText("#chapters > div > .chapter.preface.group > h3"),
 				Summary:     e.ChildText("#chapters > chapter.preface.group > #summary > blockquote"),
 				Content:     text,
-				AuthorNotes: e.ChildText("#chapters > end.notes.module > blockquote"),
+				AuthorNotes: e.ChildText("#chapters > chapter.preface.group"),
 			}
 		})
 
@@ -100,11 +100,9 @@ func ScrapeWork(work_id string, chapter int) (*Chapter, error) { // to do: make 
 			workToScrape += fmt.Sprintf("/chapters/%v", chapter_id)
 		}
 		fmt.Println("Visiting ", workToScrape)
-		c.Visit(workToScrape)
-
-		fmt.Println("Sending work through channel")
+		err := c.Visit(workToScrape)
+		fmt.Println("scraping work error", err)
 		result <- work_chapter
-
 	}()
 
 

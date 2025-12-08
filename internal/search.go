@@ -32,7 +32,7 @@ func QuerySearchResults(query string) ([]Work, error) {
 	var lengthTags int
 
 	c := colly.NewCollector()
-    c.SetRequestTimeout(30 * time.Second)
+    c.SetRequestTimeout(5 * time.Second)
     c.AllowURLRevisit = true
 
 	c.OnHTML("li[class]", func(e *colly.HTMLElement) {
@@ -51,6 +51,7 @@ func QuerySearchResults(query string) ([]Work, error) {
 			} else {
 				lengthToTruncateTo = lengthTags
 			}
+			fmt.Println("Debug: work was ", e.ChildText("div.header > h4.heading > a:nth-child(1)"))
 			work := Work{
 				ID:          strings.Split(e.Attr("id"), "_")[1],
 				Title:       e.ChildText("div.header > h4.heading > a:nth-child(1)"),
@@ -68,6 +69,7 @@ func QuerySearchResults(query string) ([]Work, error) {
 	})
 
 	err := c.Visit(fmt.Sprintf("https://archiveofourown.org/works/search?work_search%%5Bquery%%5D=%s&work_search%%5Btitle%%5D=&work_search%%5Bcreators%%5D=&work_search%%5Brevised_at%%5D=&work_search%%5Bcomplete%%5D=&work_search%%5Bcrossover%%5D=&work_search%%5Bsingle_chapter%%5D=0&work_search%%5Bword_count%%5D=&work_search%%5Blanguage_id%%5D=en&work_search%%5Bfandom_names%%5D=&work_search%%5Brating_ids%%5D=&work_search%%5Bcharacter_names%%5D=&work_search%%5Brelationship_names%%5D=&work_search%%5Bfreeform_names%%5D=&work_search%%5Bhits%%5D=&work_search%%5Bkudos_count%%5D=&work_search%%5Bcomments_count%%5D=&work_search%%5Bbookmarks_count%%5D=&work_search%%5Bsort_column%%5D=_score&work_search%%5Bsort_direction%%5D=desc&commit=Search", query))
+
 	if err != nil {
 		return nil, err
 	}
