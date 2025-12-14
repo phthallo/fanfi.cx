@@ -32,7 +32,7 @@ func QuerySearchResults(query string) ([]Work, error) {
 	var lengthTags int
 
 	c := colly.NewCollector()
-    c.SetRequestTimeout(5 * time.Second)
+    c.SetRequestTimeout(10 * time.Second)
     c.AllowURLRevisit = true
 
 	c.OnHTML("li[class]", func(e *colly.HTMLElement) {
