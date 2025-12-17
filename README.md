@@ -10,16 +10,14 @@ Query and read fanfiction from the Archive of Our Own over DNS. Inspired by [ch.
 
 ## Usage
 ```
-dig @fanfi.cx "your query here" TXT 
+dig @fanfi.cx "test" TXT +tcp +short
 ```
 
-`+short` is optional but will make output look neater.
-
-**Queries can and probably will time out, particularly with long works.** Add a timeout with `+timeout=<timeoutvaluehere>`. You might also need to rerun the command. I'm still not entirely sure why this happens. 
+Run the above command in your terminal. `+short` is optional but will make output look neater. `+tcp` is also optional, but I recommend it because queries usually time out without it.
 
 ### Query terms
 
-`[work_id] 22222` will fetch the work with the ID 22222. If used without `[chapter]`, it will fetch only the first chapter by default.
+`[work_id] 17400464` will fetch the work with the ID 17400464. If used without `[chapter]`, it will fetch only the first chapter by default.
 
 `[chapter] 3` can be used in conjunction with `[work_id]` and can be used for chapter-ination (pagination?? but for chapters??)
 
@@ -70,6 +68,11 @@ Make sure you run `sudo ufw allow <yourport>` to open the port you use.
 - [ ] Search result pagination
 - [ ] Tag/other metadata support for works in search view
 - [ ] Overall work view from chapter
+- [ ] Rewrite of the parameter interpretation function.
+
+## Notes
+- If the work has been deleted, can only be viewed by logged-in users only, or is otherwise restricted, you won't be able to access it using this tool.
+- I do not hold any ownership or responsibility over the content you might see when you use this tool. Seriously. Here be dragons etc etc. 
 
 ## why 💀
 1. it's silly
