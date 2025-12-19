@@ -10,7 +10,7 @@ Query and read fanfiction from the Archive of Our Own over DNS. Inspired by [ch.
 
 ## Usage
 ```
-dig @fanfi.cx "test" TXT +tcp +short
+dig @fanfi.cx "[search] test [page] 1" TXT +tcp +short
 ```
 
 Run the above command in your terminal. `+short` is optional but will make output look neater. `+tcp` is also optional, but I recommend it because queries usually time out without it.
@@ -22,6 +22,8 @@ Run the above command in your terminal. `+short` is optional but will make outpu
 `[chapter] 3` can be used in conjunction with `[work_id]` and can be used for chapter-ination (pagination?? but for chapters??)
 
 `[search] search query here` will search for that term. 
+
+`[page] 2` can be used in conjunction with `[search]` and can be used for pagination of search results. Note that if you're using `[page]` you must specify `[search]` instead of withholding it entirely.
 
 If no parameters are specified, it will default to searching for that term.
 
@@ -65,7 +67,7 @@ Make sure you run `sudo ufw allow <yourport>` to open the port you use.
 
 ## Roadmap
 
-- [ ] Search result pagination
+- [x] Search result pagination
 - [ ] Tag/other metadata support for works in search view
 - [ ] Overall work view from chapter
 - [ ] Rewrite of the parameter interpretation function.

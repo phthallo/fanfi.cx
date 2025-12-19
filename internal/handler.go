@@ -79,6 +79,17 @@ func Handler(name string) ([]newdns.Set, error) {
 			fmt.Println("Handler error", err)
 		}
 		var searchQuery = parsedSearchParams["search"]
+		
+		var page int
+		if parsedSearchParams["page"] == "" {
+			page = 1
+		} else {
+			if int_page, err := strconv.Atoi(parsedSearchParams["page"]); err != nil {
+				fmt.Println("Error converting page to number", err)
+			} else {
+				page = int_page
+			}
+		}
 
 		var chapter int
 		if parsedSearchParams["chapter"] != "" && parsedSearchParams["search"] == "" {
@@ -90,9 +101,10 @@ func Handler(name string) ([]newdns.Set, error) {
 		} else {
 			chapter = 1
 		}
-		fmt.Println("Determined chapter as", chapter)
+		fmt.Println(parsedSearchParams)
 		
 		var workID = parsedSearchParams["work_id"]
+
 		// var output string
 
 		sets := []newdns.Set{
@@ -119,26 +131,23 @@ func Handler(name string) ([]newdns.Set, error) {
 		}
 
 		if searchQuery != "" { // TO DO: add support for defaulting to search query if no tags passed
-			searchResults, err = QuerySearchResults(searchQuery)
+			searchResults, err = QuerySearchResults(searchQuery, page)
 			if err != nil {
-				fmt.Println("this is where the err", err)
-			}
-
-			formatted := FormatSearchResults(searchResults)
-			fmt.Println(formatted)
-			for _, txt := range formatted {
-				txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
+				txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{fmt.Sprintf("Error fetching search results: %v", err)}})
+			} else {
+				formatted := FormatSearchResults(searchResults)
+				for _, txt := range formatted {
+					txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
+				}
 			}
 		}
 		
 		if workID != "" {
 			chapterResults, err = ScrapeWork(workID, chapter)
-
 			if err != nil {
 				fmt.Println("Error fetching work:", err)
-			} 
-
-			if chapterResults != nil {
+				txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{fmt.Sprintf("Error: %v", err)}})
+			} else {
 				for _, txt := range FormatWork(chapterResults) {
 					txtSet.Records = append(txtSet.Records, newdns.Record{Data: []string{txt}})
 				}

@@ -28,7 +28,8 @@ func obtainChapter(work_id string, chapter int) (ch int) {
 	var chapter_id int
 	var err error
 	c := colly.NewCollector() // to do: figure out better ? multithreaded colly solution for cases of high use
-    c.SetRequestTimeout(10 * time.Second)
+    c.SetRequestTimeout(15 * time.Second)
+	c.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:146.0) Gecko/20100101 Firefox/146.0"
     c.AllowURLRevisit = true
 
 	//
@@ -62,7 +63,8 @@ func ScrapeWork(work_id string, chapter int) (*Chapter, error) { // to do: make 
 		chapter_id = 0
 	}
 	c := colly.NewCollector()
-    c.SetRequestTimeout(10 * time.Second)
+    c.SetRequestTimeout(15 * time.Second)
+	c.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:146.0) Gecko/20100101 Firefox/146.0"
     c.AllowURLRevisit = true
 
 
